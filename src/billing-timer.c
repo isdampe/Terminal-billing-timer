@@ -52,5 +52,8 @@ void render_screen( billing_time * et )
 	strcpy(plural, ( et->seconds > 1 ? "seconds" : "second" )); 	
 	printf("%d %s", et->seconds, plural);
 
+	//Ensure we have nulled out the line
+	printf("              ");
+
 	fflush(stdout);
 }
