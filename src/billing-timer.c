@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
+#include <curses.h>
 
 void render_screen();
 
@@ -10,26 +11,68 @@ typedef struct {
 	int hours;
 	int minutes;
 	int seconds;
+	int paused;
 } billing_time;
 
 int main()
 {
-	time_t start_time, current_time;
-	double precise_time_difference;
-	billing_time timer;
+	time_t start_time, current_time, pause_time;
+	float pause_time_diff;
+	float precise_time_difference;
 
-	printf("Starting billing timer...\n");
+	//Setup the billing timer struct
+	billing_time timer;
+	timer.paused = 0;
+
+	//Setup status
+	int running = 0;
+
+	//Setup ncurses to read key input
+	initscr();
+	timeout(50);
+	printf("Starting billing timer...\n\n");
+	running = 1;
+
+	//Set start time.
 	time(&start_time);
 
 	while (1) 
 	{
-		sleep(1);
+		//Read input for ncurses non-blocking input
+		int c = getch();
+
+		//Check for pause
+		if ( c == 112 && running == 1 ) {
+			time(&pause_time);
+			running = 0;
+		} else if ( c == 114 && running == 0 ) {
+			//Check for resume
+			timer.paused = timer.paused + pause_time_diff;
+			pause_time_diff = 0;
+			running = 1;
+		}
+
+		//Always fetch the current time.
 		time(&current_time);
-		precise_time_difference = difftime(current_time, start_time);
-		timer.time_diff = (int) precise_time_difference;
-		render_screen( &timer );
+
+		//If the timer is running
+		if ( running == 1 ) {
+			precise_time_difference = difftime(current_time, start_time);
+
+			//Ensure we subtract paused time
+			timer.time_diff = ( (int) precise_time_difference - (int) timer.paused );
+			render_screen( &timer );
+		} else {
+			//If the timer has been paused
+			pause_time_diff = difftime(current_time, pause_time);
+		}
+
+		//Sleep for 100ms
+		usleep(10000);
+
 	}
 
+	endwin();
 	return 0;
 }
 
@@ -42,18 +85,18 @@ void render_screen( billing_time * et )
 
 	printf("\rRunning for: ");
 	if ( et->hours > 0 ) {
-	  strcpy(plural, ( et->hours > 1 ? "hours" : "hour" )); 	
+		strcpy(plural, ( et->hours > 1 ? "hours" : "hour" )); 	
 		printf("%d %s, ", et->hours, plural);
 	}
 	if ( et->minutes > 0 ) {
-	  strcpy(plural, ( et->minutes > 1 ? "minutes" : "minute" )); 	
+		strcpy(plural, ( et->minutes > 1 ? "minutes" : "minute" )); 	
 		printf("%d %s, ", et->minutes, plural);
 	}
 	strcpy(plural, ( et->seconds > 1 ? "seconds" : "second" )); 	
 	printf("%d %s", et->seconds, plural);
 
 	//Ensure we have nulled out the line
-	printf("              ");
+	printf("              [P]ause    [R]esume   ");
 
 	fflush(stdout);
 }
