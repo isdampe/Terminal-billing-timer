@@ -50,6 +50,9 @@ int main()
 			timer.paused = timer.paused + pause_time_diff;
 			pause_time_diff = 0;
 			running = 1;
+		} else if ( c == 113 ) {
+			endwin();
+			return 0;
 		}
 
 		//Always fetch the current time.
@@ -96,7 +99,7 @@ void render_screen( billing_time * et )
 	printf("%d %s", et->seconds, plural);
 
 	//Ensure we have nulled out the line
-	printf("              [P]ause    [R]esume   ");
+	printf("              [P]ause    [R]esume    [Q]uit   ");
 
 	fflush(stdout);
 }
