@@ -64,11 +64,13 @@ int main()
 
 			//Ensure we subtract paused time
 			timer.time_diff = ( (int) precise_time_difference - (int) timer.paused );
-			render_screen( &timer );
 		} else {
 			//If the timer has been paused
 			pause_time_diff = difftime(current_time, pause_time);
 		}
+
+
+		render_screen( &timer, &running );
 
 		//Sleep for 100ms
 		usleep(10000);
@@ -79,7 +81,7 @@ int main()
 	return 0;
 }
 
-void render_screen( billing_time * et )
+void render_screen( billing_time * et, int * running )
 {
 	char plural[10];
 	et->hours = (et->time_diff / 3600);
@@ -99,7 +101,11 @@ void render_screen( billing_time * et )
 	printf("%d %s", et->seconds, plural);
 
 	//Ensure we have nulled out the line
-	printf("              [P]ause    [R]esume    [Q]uit   ");
+	if ( *running == 1 ) {
+		printf("              [P]ause    [R]esume    [Q]uit   ");
+	} else {
+		printf("              PAUSED     [R]esume    [Q]uit   ");
+	}
 
 	fflush(stdout);
 }
