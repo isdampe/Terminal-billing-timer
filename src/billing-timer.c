@@ -102,9 +102,9 @@ void render_screen( billing_time * et, int * running )
 
 	//Ensure we have nulled out the line
 	if ( *running == 1 ) {
-		printf("              [P]ause    [R]esume    [Q]uit   ");
+		printf(" - [P]ause    [Q]uit");
 	} else {
-		printf("              PAUSED     [R]esume    [Q]uit   ");
+		printf(" - [R]esume    [Q]uit");
 	}
 
 	fflush(stdout);
