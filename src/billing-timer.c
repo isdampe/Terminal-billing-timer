@@ -29,6 +29,7 @@ int main()
 
 	//Setup ncurses to read key input
 	initscr();
+	noecho();
 	timeout(50);
 	printf("Starting billing timer...\n\n");
 	running = 1;
@@ -69,7 +70,7 @@ int main()
 			pause_time_diff = difftime(current_time, pause_time);
 		}
 
-
+		erase();
 		render_screen( &timer, &running );
 
 		//Sleep for 100ms
@@ -102,9 +103,9 @@ void render_screen( billing_time * et, int * running )
 
 	//Ensure we have nulled out the line
 	if ( *running == 1 ) {
-		printf(" - [P]ause    [Q]uit");
+		printf(" - [P]ause    [Q]uit   ");
 	} else {
-		printf(" - [R]esume    [Q]uit");
+		printf(" - [R]esume    [Q]uit   ");
 	}
 
 	fflush(stdout);
