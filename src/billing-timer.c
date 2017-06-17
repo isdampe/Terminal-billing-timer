@@ -30,6 +30,7 @@ int main()
 	//Setup ncurses to read key input
 	initscr();
 	noecho();
+	curs_set(0);
 	timeout(50);
 	printf("Starting billing timer...\n\n");
 	running = 1;
