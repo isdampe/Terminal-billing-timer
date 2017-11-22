@@ -4,8 +4,6 @@
 #include <string.h>
 #include <curses.h>
 
-void render_screen();
-
 typedef struct {
 	int time_diff;
 	int hours;
@@ -13,6 +11,8 @@ typedef struct {
 	int seconds;
 	int paused;
 } billing_time;
+
+void render_screen( billing_time * et, int * running );
 
 int main()
 {
